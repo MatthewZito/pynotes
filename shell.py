@@ -6,14 +6,9 @@ from os.path import isfile, join
 import json
 import inquirer
 
-### Config Notes Dir ###
 
-# check if config file and path val therein exist
-# path = '/home/goldmund/Documents/pynotes_dir'
-
-
-# Runs If Args Given
 def run(args):
+    # if notes dir does not exist, create one 
     path_existence = False
     path = ''
     while (path_existence == False):
@@ -22,8 +17,8 @@ def run(args):
                 data = json.load(config_file)
                 path = data['notes_storage_path']
                 path_existence = True
-        except:
-    # set config file, needs to read path from config file
+        except: 
+            # set config file, pynotes likes to read path from config file
             data = {}
             data['notes_storage_path'] = ""
             new_path = input('Set a path for your notes: ')
@@ -32,6 +27,7 @@ def run(args):
                 json.dump(data, outfile)
             os.mkdir(f'{new_path}/pynotes_dir')
 
+    # if args were passed. pynotes really likes args
     if (args.new is not None):
         with open(f'{path}/{args.new}.txt', mode='a') as new_arg_file:
             writable = input('Write new note: ')
@@ -48,31 +44,28 @@ def run(args):
     else:
         run_action_interface(path)
 
-### Action Interface ### 
 
 def run_action_interface(path):
-### Format Paths ###
-    print(path)
+    #format paths
     all_files = [f for f in listdir(path) if isfile(join(path, f))]
     stripped_files = list(map(lambda x: x.replace('.txt',''),all_files))
 
 ### FUNCTIONS ###
 
-    # New File
+    #create a new note
     def new_file():
-        # write new file
         new_file_name = input('Name this new note: ')
         with open(f'{path}/{new_file_name}.txt', mode='a') as new_file:
             writable = input('Write new note: ')
             new_file.write('\n' + writable)
 
-    # Read File
+    #read an existing note
     def read_file():
         read_file_name = inquirer.list_input("Select a note to read: ",choices=stripped_files,)
         with open(f'{path}/{read_file_name}.txt', mode='r') as read_file:
             print(read_file.read())
 
-    # Edit File
+    #edit an existing note
     def edit_file():
         edit_file_name = inquirer.list_input('Select a note to append to: ',choices=stripped_files,)
         with open(f'{path}/{edit_file_name}.txt', mode='r') as edit_file:
@@ -94,8 +87,6 @@ def run_action_interface(path):
         edit_file()
 
 
-### MAIN ARGPARSE FUNC ###
-
 # TO-DO: add direct func calls if -r or -e options are passed w/out a file arg
 def main():
     parser=argparse.ArgumentParser(description="Easily take and keep notes from anywhere in the shell.")
@@ -104,7 +95,7 @@ def main():
     parser.add_argument("-a",help="name of note you want to edit" ,dest="edit", type=str, required=False, action='store')
     parser.set_defaults(func=run)
     args=parser.parse_args()
-    args.func(args)
+    args.func(args) 
 
 if __name__=="__main__":
 	main()
