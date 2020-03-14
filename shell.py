@@ -46,33 +46,37 @@ def run(args):
 
 
 def run_action_interface(path):
-    #format paths
+    # format paths
     all_files = [f for f in listdir(path) if isfile(join(path, f))]
     stripped_files = list(map(lambda x: x.replace('.txt',''),all_files))
 
 ### FUNCTIONS ###
 
-    #create a new note
+    # create a new note
     def new_file():
         new_file_name = input('Name this new note: ')
         with open(f'{path}/{new_file_name}.txt', mode='a') as new_file:
             writable = input('Write new note: ')
             new_file.write('\n' + writable)
 
-    #read an existing note
+    # read an existing note
     def read_file():
-        read_file_name = inquirer.list_input("Select a note to read: ",choices=stripped_files,)
-        with open(f'{path}/{read_file_name}.txt', mode='r') as read_file:
-            print(read_file.read())
+        read_file_name = inquirer.list_input("Select a note to read: ",choices=stripped_files)
+        # if statement to prevent inquirer from printing every selection
+        if (read_file_name in stripped_files):
+            with open(f'{path}/{read_file_name}.txt', mode='r') as read_file:
+                print(read_file.read())
 
-    #edit an existing note
+    # edit an existing note
     def edit_file():
-        edit_file_name = inquirer.list_input('Select a note to append to: ',choices=stripped_files,)
-        with open(f'{path}/{edit_file_name}.txt', mode='r') as edit_file:
-            print(edit_file.read())
-        with open(f'{path}/{edit_file_name}.txt', mode='a') as edit_file:
-            writable = input('Add to note: ')
-            edit_file.write('\n' + writable)
+        edit_file_name = inquirer.list_input("Select a note to append to: ",choices=stripped_files)
+        # if statement to prevent inquirer from printing every selection
+        if (edit_file_name in stripped_files):
+            with open(f'{path}/{edit_file_name}.txt', mode='r') as edit_file:
+                print(edit_file.read())
+            with open(f'{path}/{edit_file_name}.txt', mode='a') as edit_file:
+                writable = input('Add to note: ')
+                edit_file.write('\n' + writable)
 
 ### Options UI ###
 
