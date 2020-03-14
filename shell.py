@@ -75,8 +75,9 @@ def run_action_interface():
             writable = input('Add to note: ')
             edit_file.write('\n' + writable)
     
-
-    action = input('Select an option: (n) Create a new note, (r) Read an existing note, (a) Append to an existing note: ')
+    options = [("Create a new note",'n'), ("Read an existing note", 'r'), ("Append to an existing note", "a")]
+    action = inquirer.list_input("Select an option: ", choices=options)
+    
     if (action == 'n'):
         new_file()
     elif (action == 'r'):
