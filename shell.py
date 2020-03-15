@@ -28,21 +28,25 @@ def run(args):
             os.mkdir(f'{new_path}/pynotes_dir')
 
     # if args were passed. pynotes really likes args
-    if (args.new is not None):
-        with open(f'{path}/{args.new}.txt', mode='a') as new_arg_file:
-            writable = input('Write new note: ')
-            new_arg_file.write('\n' + writable)
-    elif (args.read is not None):
-        with open(f'{path}/{args.read}.txt', mode='r') as read_arg_file:
-            print(read_arg_file.read())
-    elif (args.edit is not None):
-        with open(f'{path}/{args.edit}.txt', mode='r') as edit_arg_file:
-            print(edit_arg_file.read())
-        with open(f'{path}/{args.edit}.txt', mode='a') as edit_arg_file:
-            writable = input('Add to note: ')
-            edit_arg_file.write('\n' + writable)
-    else:
-        run_action_interface(path)
+    try:
+        if (args.new is not None):
+            with open(f'{path}/{args.new}.txt', mode='a') as new_arg_file:
+                writable = input('Write new note: ')
+                new_arg_file.write('\n' + writable)
+        elif (args.read is not None):
+            with open(f'{path}/{args.read}.txt', mode='r') as read_arg_file:
+                print(read_arg_file.read())
+        elif (args.edit is not None):
+            with open(f'{path}/{args.edit}.txt', mode='r') as edit_arg_file:
+                print(edit_arg_file.read())
+            with open(f'{path}/{args.edit}.txt', mode='a') as edit_arg_file:
+                writable = input('Add to note: ')
+                edit_arg_file.write('\n' + writable)
+        else:
+            run_action_interface(path)
+    except:
+        print('Something went wrong...')
+        return
 
 
 def run_action_interface(path):
@@ -54,7 +58,10 @@ def run_action_interface(path):
 
     # create a new note
     def new_file():
-        new_file_name = input('Name this new note: ')
+        try:
+            new_file_name = input('Name this new note: ')
+        except: 
+            print('Something went wrong...')
         with open(f'{path}/{new_file_name}.txt', mode='a') as new_file:
             writable = input('Write new note: ')
             new_file.write('\n' + writable)
@@ -66,10 +73,13 @@ def run_action_interface(path):
         if (read_file_name in stripped_files):
             with open(f'{path}/{read_file_name}.txt', mode='r') as read_file:
                 print(read_file.read())
+        else:
+            print('The note you specified does not exist.')
 
     # edit an existing note
     def edit_file():
         edit_file_name = inquirer.list_input("Select a note to append to: ",choices=stripped_files)
+        
         # if statement to prevent inquirer from printing every selection
         if (edit_file_name in stripped_files):
             with open(f'{path}/{edit_file_name}.txt', mode='r') as edit_file:
@@ -77,6 +87,8 @@ def run_action_interface(path):
             with open(f'{path}/{edit_file_name}.txt', mode='a') as edit_file:
                 writable = input('Add to note: ')
                 edit_file.write('\n' + writable)
+        else:
+            print('The note you specified does not exist.')
 
 ### Options UI ###
 
@@ -94,9 +106,9 @@ def run_action_interface(path):
 # TO-DO: add direct func calls if -r or -e options are passed w/out a file arg
 def main():
     parser=argparse.ArgumentParser(description="Easily take and keep notes from anywhere in the shell.")
-    parser.add_argument("-r",help="name of note you want to read" ,dest="read", type=str, required=False, action='store')
-    parser.add_argument("-n",help="name of new note" ,dest="new", type=str, required=False, action='store')
-    parser.add_argument("-a",help="name of note you want to edit" ,dest="edit", type=str, required=False, action='store')
+    parser.add_argument("-r",help="name of note you want to read (without file extension)" ,dest="read", type=str, required=False, action='store')
+    parser.add_argument("-n",help="name of new note (without file extension)" ,dest="new", type=str, required=False, action='store')
+    parser.add_argument("-a",help="name of note you want to edit (without file extension)" ,dest="edit", type=str, required=False, action='store')
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args) 
@@ -109,3 +121,4 @@ if __name__=="__main__":
 # need to make man page
 # need to disable multiple, conflicting args
 # need to display files, selectable by int
+# need to add a help arg
