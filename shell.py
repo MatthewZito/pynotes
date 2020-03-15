@@ -5,6 +5,7 @@ from os import listdir
 from os.path import isfile, join
 import json
 import inquirer
+import re
 
 
 def run(args):
@@ -55,11 +56,18 @@ def run_action_interface(path):
     stripped_files = list(map(lambda x: x.replace('.txt',''),all_files))
 
 ### FUNCTIONS ###
+    def validate(file_name):
+        print('This name includes illegal characters; converting to safe filename...')
+        stripped_proc = str(file_name).strip().replace(' ', '_')
+        subbed_proc = re.sub(r'(?u)[^-\w.]', '', stripped_proc)
+        print(f'This note has been renamed to `{subbed_proc}`')
+        return subbed_proc
 
     # create a new note
     def new_file():
         try:
             new_file_name = input('Name this new note: ')
+            new_file_name = validate(new_file_name)
         except: 
             print('Something went wrong...')
         with open(f'{path}/{new_file_name}.txt', mode='a') as new_file:
