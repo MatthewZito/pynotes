@@ -6,7 +6,9 @@ from os.path import isfile, join
 import json
 import inquirer
 import re
+import pyfiglet
 
+ascii_banner = pyfiglet.figlet_format("PyNotes")
 
 def run(args):
     # if notes dir does not exist, create one 
@@ -106,7 +108,7 @@ def run_action_interface(path):
             print('The note you specified does not exist.')
 
 ### Options UI ###
-
+    print(ascii_banner)
     options = [("Create a new note",'n'), ("Read an existing note", 'r'), ("Append to an existing note", "a")]
     action = inquirer.list_input("Select an option: ", choices=options)
     
