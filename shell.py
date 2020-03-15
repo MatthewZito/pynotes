@@ -10,6 +10,14 @@ import pyfiglet
 
 ascii_banner = pyfiglet.figlet_format("PyNotes")
 
+# validate input filenames and remove illegal chars
+def validate(file_name):
+    stripped_proc = str(file_name).strip().replace(' ', '_')
+    subbed_proc = re.sub(r'(?u)[^-\w.]', '', stripped_proc)
+    if (file_name != subbed_proc):
+        print(f"Input includes illegal characters; this note has been renamed to '{subbed_proc}'")
+    return subbed_proc
+    
 def run(args):
     # if notes dir does not exist, create one 
     path_existence = False
@@ -30,12 +38,6 @@ def run(args):
                 json.dump(data, outfile)
             os.mkdir(f'{new_path}/pynotes_dir')
 
-    def validate(file_name):
-            print('This name includes illegal characters; converting to safe filename...')
-            stripped_proc = str(file_name).strip().replace(' ', '_')
-            subbed_proc = re.sub(r'(?u)[^-\w.]', '', stripped_proc)
-            print(f"This note has been renamed to '{subbed_proc}'")
-            return subbed_proc
     # if args were passed. pynotes really likes args
     try:
         if (args.new is not None):
@@ -79,6 +81,7 @@ def run_action_interface(path):
             new_file_name = validate(new_file_name)
         except: 
             print('Something went wrong...')
+            
         with open(f'{path}/{new_file_name}.txt', mode='a') as new_file:
             writable = input('Write new note: ')
             new_file.write('\n' + writable)
