@@ -43,7 +43,10 @@ def run(args):
         if (args.new is not None):
             new_file_name_from_args = validate(args.new)
             with open(f'{path}/{new_file_name_from_args}.txt', mode='a') as new_arg_file:
-                writable = input('Write new note: ')
+                if (args.content is not None):
+                    writable = args.content
+                else:
+                    writable = input('Write new note: ')
                 new_arg_file.write('\n' + writable)
         elif (args.read is not None):
             try:
@@ -53,10 +56,13 @@ def run(args):
                 print(f"Note '{args.read}' does not exist.")
         elif (args.edit is not None):
             try:
-                with open(f'{path}/{args.edit}.txt', mode='r') as edit_arg_file:
-                    print(edit_arg_file.read())
+                # with open(f'{path}/{args.edit}.txt', mode='r') as edit_arg_file:
+                #     print(edit_arg_file.read())
                 with open(f'{path}/{args.edit}.txt', mode='a') as edit_arg_file:
-                    writable = input('Add to note: ')
+                    if (args.content is not None):
+                        writable = args.content
+                    else:
+                        writable = input('Add to note: ')
                     edit_arg_file.write('\n' + writable)
             except IOError:
                 print(f"Note '{args.edit}' does not exist.")
@@ -125,11 +131,14 @@ def run_action_interface(path):
 # TO-DO: add direct func calls if -r or -e options are passed w/out a file arg
 def main():
     parser=argparse.ArgumentParser(description="Easily take and keep notes from anywhere in the shell.", epilog=textwrap.dedent('''\
-        Note names should be passed without a file extension. Pynotes appends `.txt` by default.
-        Example Usage: $ pynotes -r note5'''), formatter_class=argparse.RawTextHelpFormatter)
+        Note names should be passed without a file extension. 
+        Pynotes appends `.txt` by default. Content should be passed in quotes.
+        
+        Example Usage: $ pynotes -n note5 -c "content of new note note5" '''), formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-r",help="name of note you want to read" ,dest="read", type=str, required=False, action='store')
     parser.add_argument("-n",help="name of new note" ,dest="new", type=str, required=False, action='store')
     parser.add_argument("-a",help="name of note you want to edit" ,dest="edit", type=str, required=False, action='store')
+    parser.add_argument("-c",help="content of note, in quotes" ,dest="content", type=str, required=False, action='store')
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args) 
@@ -140,3 +149,4 @@ if __name__=="__main__":
 
 ### TODOS
 # need to make man page
+# make optional sub-arguments for append and new note 
